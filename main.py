@@ -1,9 +1,20 @@
 import os
 
 from pydub import AudioSegment
-from pydub.playback import play
 from pytube import YouTube
 from pytube.cli import on_progress
+
+
+def replaceCharacters(str):
+    '''
+    Drops reserved characters from string.
+    Source: https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file?redirectedfrom=MSDN
+    '''
+    skipChars = "`~!@#$%^&*()_+=-|}{[]\;':?></.,"
+    for i in skipChars:
+        if i in str:
+            str = str.replace(i, '')
+    return str
 
 
 def download(link):
@@ -17,18 +28,18 @@ def download(link):
     '''
     def changeCompleteStatus(status):
         status = not status
-        print("\n---Download Complete!---")
 
     downloadStatus = False
     try:
         yt = YouTube(link, on_progress_callback=on_progress)
     except:
         print("EXCEPTION OCCURED")
-    trackTitle = yt.title
+    trackTitle = replaceCharacters(yt.title)
     print(f"\n---Downloading: {trackTitle}---")
 
     yt.register_on_complete_callback(changeCompleteStatus(downloadStatus))
     yt.streams.filter(only_audio=True)[0].download(trackTitle)
+    print("\n---Download Complete!---")
     return trackTitle
 
 
@@ -66,7 +77,9 @@ def clipAudio(audioFile, timeStamp, trackTitle):
 
 
 if __name__ == "__main__":
-    file = open('readthis.txt', 'r')
+    # y = replaceCharacters("Helo'p;][uatsd123!")
+    # print(y)
+    file = open('Link.txt', 'r')
     lines = file.readlines()
     link = lines[0]
 
@@ -81,5 +94,3 @@ if __name__ == "__main__":
     count = 0
     exportName = trackTitle.split(' ')[0]
     clipAudio(audioFile, lines, trackTitle)
-
-
