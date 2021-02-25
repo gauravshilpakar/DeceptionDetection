@@ -38,7 +38,8 @@ def download(link):
     print(f"\n---Downloading: {trackTitle}---")
 
     yt.register_on_complete_callback(changeCompleteStatus(downloadStatus))
-    yt.streams.filter(only_audio=True)[0].download(trackTitle)
+    yt.streams.filter(only_audio=True)[0].download(
+        trackTitle, filename=trackTitle)
     print("\n---Download Complete!---")
     return trackTitle
 
@@ -77,8 +78,6 @@ def clipAudio(audioFile, timeStamp, trackTitle):
 
 
 if __name__ == "__main__":
-    # y = replaceCharacters("Helo'p;][uatsd123!")
-    # print(y)
     file = open('Link.txt', 'r')
     lines = file.readlines()
     link = lines[0]
