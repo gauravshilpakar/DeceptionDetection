@@ -38,7 +38,7 @@ def download(link):
     print(f"\n---Downloading: {trackTitle}---")
 
     yt.register_on_complete_callback(changeCompleteStatus(downloadStatus))
-    yt.streams.filter(only_audio=True)[0].download(trackTitle)
+    yt.streams.filter(only_audio=True)[0].download('./ytAudiofiles',filename=trackTitle)
     print("\n---Download Complete!---")
     return trackTitle
 
@@ -53,8 +53,9 @@ def clipAudio(audioFile, timeStamp, trackTitle):
                                                 ->mm:ss, mm:ss
         trackTitle (str): 	Title of the YouTube video				
     '''
+    if not os.path.exists('./trackfiles/'+trackTitle):
+        os.makedirs('./trackfiles/'+trackTitle)
     count = 0
-    exportName = trackTitle.split(' ')[0]
     print("\n---Clipping Audio to Time Stamps!---")
     for line in timeStamp[1:]:
         times = line.split(',')
@@ -67,10 +68,9 @@ def clipAudio(audioFile, timeStamp, trackTitle):
         finishTime = (int(finishMin) * 60 + int(finishSec)) * 1000
         try:
             cutAudio = audioFile[startTime:finishTime]
-            cutAudio.export(
-                f"{os.getcwd()}/{trackTitle}/{exportName}{count}.mp3", format="mp3")
+            cutAudio.export(f"{os.getcwd()}\\trackfiles\\{trackTitle}\\{count}.mp3", format="mp3")
         except:
-            print("Couldn't export clip of time stamp: {start}-{finish}")
+            print(f"Couldn't export clip of time stamp: {start} - {finish}")
 
         count = count + 1
     print("\n---Clipping Complete---")
@@ -88,9 +88,10 @@ if __name__ == "__main__":
     trackTitle = download(link)
 
     reqPath = os.path.join(
-        os.getcwd(), trackTitle, trackTitle.replace(',', '') + ".mp4")
+        os.getcwd()+'\\ytAudiofiles\\', trackTitle.replace(',', '') + ".mp4")
     audioFile = AudioSegment.from_file(reqPath, "mp4")
 
     count = 0
     exportName = trackTitle.split(' ')[0]
     clipAudio(audioFile, lines, trackTitle)
+
