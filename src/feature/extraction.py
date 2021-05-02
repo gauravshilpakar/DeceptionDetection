@@ -1,19 +1,20 @@
 import os
-import librosa
+import librosa, librosa.display
 import matplotlib.pyplot as plt
 import sys
 import pathlib
+import numpy as np
 
 def generate_mel_spectrogram(folder_path,track_name):
     if track_name.endswith('.mp3'):
-        x, sr = librosa.load(folder_path/track_name)
+        x, sr = librosa.load((folder_path/track_name).as_posix())
         hop_length = 256
         S = librosa.feature.melspectrogram(x,sr=sr,n_fft=4096,hop_length=hop_length)
-        logS = librosa.power_to_db(abs(S))
-        plt.figure(figsize=(15,5))
-        librosa.display.specshow(logS,sr,hop_length=hop_length,x_axis='time',y_axis='mel')
-        plt.colorbar(format='%+2.0f dB')
-        plt.savefig(folder_path/'Spectrogram'/os.path.splitext(track_name)[0]+'.png')
+        logS = librosa.power_to_db(S,ref= np.max)
+        fig, ax = plt.subplots()
+        img = librosa.display.specshow(logS,hop_length=hop_length,x_axis='time',y_axis='mel',ax=ax)
+        fig.colorbar(img,ax=ax,format='%+2.0f dB')
+        fig.savefig(folder_path/'Spectrogram'/os.path.splitext(track_name)[0])
 
 def get_tracks_spectrogram(folder_path):
     if not os.path.exists(folder_path/'Spectrogram'):
