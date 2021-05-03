@@ -7,7 +7,7 @@ import numpy as np
 
 def generate_mel_spectrogram(folder_path,track_name):
     if track_name.endswith('.mp3'):
-        x, sr = librosa.load((folder_path/track_name).as_posix())
+        x, sr = librosa.load((folder_path/track_name).as_posix()) # librosa likes unix path system
         hop_length = 256
         S = librosa.feature.melspectrogram(x,sr=sr,n_fft=4096,hop_length=hop_length)
         logS = librosa.power_to_db(S,ref= np.max)
@@ -23,6 +23,6 @@ def get_tracks_spectrogram(folder_path):
         generate_mel_spectrogram(folder_path,track_name)
 
 if __name__ == "__main__":
-    root_path = pathlib.Path().absolute() / sys.argv[1]
+    root_path = pathlib.Path().absolute() / sys.argv[1] # directory path which contains folders of tracks
     for folders in os.listdir(str(root_path)):
         get_tracks_spectrogram(root_path / folders)
