@@ -55,8 +55,9 @@ def clipAudio(audioFile, timeStamp, trackTitle, downloadPath):
                                                 ->mm:ss, mm:ss
         trackTitle (str): 	Title of the YouTube video				
     '''
+    if not os.path.exists('./trackfiles/'+trackTitle):
+        os.makedirs('./trackfiles/'+trackTitle)
     count = 0
-    exportName = trackTitle.split(' ')[0]
     print("\n---Clipping Audio to Time Stamps!---")
     for line in timeStamp[1:]:
         times = line.split(',')
